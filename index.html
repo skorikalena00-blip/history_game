@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>Исторический дуэт · Россия</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    }
+    body {
+      min-height: 100vh;
+      background: linear-gradient(145deg, #f9e9e6 0%, #ffe6de 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .game-wrapper {
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto;
+      background: rgba(255, 248, 245, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 56px 56px 48px 48px;
+      box-shadow: 0 25px 50px -8px rgba(180, 80, 60, 0.25), 0 10px 20px -5px rgba(0,0,0,0.05);
+      padding: 24px 20px 32px;
+      border: 1px solid rgba(255, 215, 200, 0.5);
+      transition: all 0.2s;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #4d2e26;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 12px;
+      border-bottom: 2px dashed #eccbc2;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    h1 span {
+      background: #dbb8ad;
+      padding: 4px 18px;
+      border-radius: 60px;
+      font-size: 1rem;
+      color: #2f1c16;
+      font-weight: 500;
+      margin-left: auto;
+      background: #f0d4ca;
+      box-shadow: inset 0 1px 4px rgba(255,255,255,0.6);
+    }
+    .score-badge {
+      background: #5f3e34;
+      color: #fceee9;
+      padding: 6px 20px;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 1.2rem;
+      box-shadow: 0 4px 0 #3f2a22;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .card {
+      background: #fffbf9;
+      border-radius: 40px;
+      padding: 24px 20px;
+      box-shadow: 0 8px 0 #d6b8ae, 0 12px 28px -8px rgba(100, 50, 40, 0.2);
+      margin-bottom: 24px;
+      border: 1px solid #fae3db;
+    }
+    .question-box {
+      background: #fcf3ef;
+      border-radius: 32px;
+      padding: 24px 18px;
+      margin-bottom: 28px;
+      border-left: 6px solid #dbaa9a;
+      box-shadow: inset 0 2px 8px rgba(180, 90, 70, 0.06);
+    }
+    .question-text {
+      font-size: 1.25rem;
+      line-height: 1.5;
+      font-weight: 500;
+      color: #2a1b16;
+      margin-bottom: 6px;
+    }
+    .hint {
+      color: #8b5f52;
+      font-size: 0.9rem;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 6px;
+      background: #eddcd5;
+      padding: 8px 16px;
+      border-radius: 60px;
+      width: fit-content;
+    }
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 20px 0 18px;
+    }
+    .option-btn {
+      background: #f7eae5;
+      border: none;
+      border-radius: 100px;
+      padding: 16px 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #3d2821;
+      box-shadow: 0 4px 0 #c9b0a6, 0 6px 12px rgba(90, 45, 35, 0.08);
+      transition: all 0.08s ease;
+      text-align: center;
+      letter-spacing: 0.3px;
+      border: 1px solid #f0d7cf;
+      cursor: pointer;
+      touch-action: manipulation;
+      line-height: 1.3;
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      word-break: break-word;
+    }
+    .option-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #b1968b;
+    }
+    .option-btn.correct {
+      background: #b7d7b0;
+      border-color: #558b4a;
+      box-shadow: 0 4px 0 #3f6d36;
+      color: #1f3d18;
+    }
+    .option-btn.wrong {
+      background: #f4c9c0;
+      border-color: #b15f4e;
+      box-shadow: 0 4px 0 #944437;
+      color: #4d2118;
+    }
+    .option-btn.disabled {
+      opacity: 0.6;
+      pointer-events: none;
+      filter: grayscale(0.3);
+    }
+    .feedback-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 16px 0 12px;
+      min-height: 80px;
+    }
+    .result-badge {
+      background: #fff4ef;
+      border-radius: 60px;
+      padding: 10px 22px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid #eacbc1;
+      box-shadow: 0 2px 10px rgba(150, 80, 60, 0.08);
+    }
+    .portrait-box {
+      display: flex;
+      justify-content: center;
+      margin: 14px 0 6px;
+    }
+    .portrait-svg {
+      background: #f4e3db;
+      border-radius: 120px;
+      padding: 12px 20px 8px 20px;
+      box-shadow: 0 8px 0 #d2b7ac, 0 12px 28px rgba(100, 60, 45, 0.12);
+      max-width: 160px;
+      width: 100%;
+      transition: 0.2s;
+      border: 2px solid #fae1d6;
+    }
+    .portrait-svg svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: 140px;
+    }
+    .next-btn {
+      background: #5f3e34;
+      border: none;
+      border-radius: 80px;
+      color: white;
+      font-weight: 700;
+      font-size: 1.3rem;
+      padding: 18px 24px;
+      width: 100%;
+      box-shadow: 0 6px 0 #3f2a22;
+      transition: 0.08s linear;
+      letter-spacing: 0.5px;
+      margin-top: 16px;
+      cursor: pointer;
+      touch-action: manipulation;
+      border: 1px solid #7a5548;
+    }
+    .next-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #3f2a22;
+    }
+    .next-btn:disabled {
+      opacity: 0.4;
+      transform: translateY(2px);
+      box-shadow: 0 3px 0 #3f2a22;
+      pointer-events: none;
+    }
+    .reset-area {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 12px;
+    }
+    .reset-btn {
+      background: transparent;
+      border: 2px solid #b28b7e;
+      border-radius: 60px;
+      padding: 10px 22px;
+      font-weight: 600;
+      color: #4d322a;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: 0.1s;
+      backdrop-filter: blur(4px);
+      background: rgba(255, 242, 237, 0.4);
+    }
+    .reset-btn:active {
+      background: #dcc6bc;
+      transform: scale(0.96);
+    }
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 8px;
+      color: #5f4137;
+    }
+    .progress {
+      font-weight: 500;
+      background: #edd9d0;
+      padding: 6px 20px;
+      border-radius: 60px;
+      font-size: 0.95rem;
+    }
+    @media (max-width: 480px) {
+      .game-wrapper { padding: 16px 12px; }
+      h1 { font-size: 1.6rem; }
+      .options-grid { gap: 10px; }
+      .option-btn { font-size: 0.95rem; padding: 14px 6px; min-height: 58px; }
+      .question-text { font-size: 1.1rem; }
+      .portrait-svg { max-width: 130px; }
+    }
+    @media (min-width: 768px) {
+      .option-btn:hover {
+        background: #f0ddd5;
+        transform: scale(1.01);
+      }
+      .option-btn:active {
+        transform: translateY(3px) scale(0.99);
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="game-wrapper" role="main" aria-label="Игра-викторина по истории России">
+  <h1>
+    📜 Исторический дуэт
+    <span class="score-badge" id="scoreDisplay">0</span>
+  </h1>
+
+  <div class="card" id="gameCard">
+    <div class="question-box">
+      <div class="question-text" id="questionText">Кто из правителей...</div>
+      <div class="hint" id="hintText">💡 подсказка</div>
+    </div>
+
+    <div class="options-grid" id="optionsContainer">
+      <button class="option-btn" data-index="0">...</button>
+      <button class="option-btn" data-index="1">...</button>
+      <button class="option-btn" data-index="2">...</button>
+      <button class="option-btn" data-index="3">...</button>
+    </div>
+
+    <div class="feedback-area" id="feedbackArea">
+      <div class="result-badge" id="resultBadge">⚡ выбери вариант</div>
+      <div class="portrait-box" id="portraitBox"></div>
+    </div>
+
+    <button class="next-btn" id="nextBtn" disabled>➡️ следующий</button>
+  </div>
+
+  <div class="footer">
+    <div class="progress" id="progressText">вопрос 1 / 10</div>
+    <div class="reset-area">
+      <button class="reset-btn" id="resetBtn">⟳ начать заново</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function(){
+    // ---------- ДАННЫЕ (из учебника) ----------
+    const questions = [
+      {
+        id: 0,
+        name: 'Александр Невский',
+        description: 'Князь, разгромивший шведов на Неве и крестоносцев на Чудском озере. Сотрудничал с Ордой для восстановления Руси.',
+        hint: 'Ледовое побоище, 1242 г.',
+        svg: `<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="60" cy="60" r="58" fill="#d9c2b6" stroke="#7a5548" stroke-width="2"/>
+          <circle cx="60" cy="44" r="22" fill="#f7ede8" stroke="#8b6b5e" stroke-width="2"/>
+          <path d="M38 76 Q60 92 82 76 L76 96 L44 96 L38 76Z" fill="#5f3e34" stroke="#4d2e26" stroke-width="2"/>
+          <rect x="48" y="66" width="24" height="8" rx="4" fill="#3f2a22"/>
+          <circle cx="46" cy="40" r="4" fill="#2a1b16"/>
+          <circle cx="74" cy="40" r="4" fill="#2a1b16"/>
+          <path d="M52 48 L60 56 L68 48" stroke="#2a1b16" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M34 58 L24 50 L30 62 L22 68 L34 64 L38 74 L44 64 L56 62 L44 58 L38 48 L34 58Z" fill="#b58d7a" opacity="0.8"/>
+        </svg>`
+      },
+      {
+        id: 1,
+        name: 'Иван Грозный',
+        description: 'Первый русский царь, ввёл опричнину, присоединил Казанское и Астраханское ханства. Ливонская война завершилась неудачей.',
+        hint: 'опричнина, взятие Казани',
+        svg: `<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="60" cy="60" r="58" fill="#c9b0a6" stroke="#6b4d3f" stroke-width="2"/>
+          <circle cx="60" cy="42" r="24" fill="#efe3dc" stroke="#7a5b4e" stroke-width="2"/>
+          <rect x="42" y="68" width="36" height="12" rx="6" fill="#3d2b24"/>
+          <path d="M32 72 L48 82 L72 82 L88 72 L80 92 L40 92 L32 72Z" fill="#4d322a" stroke="#2f1c16" stroke-width="1.5"/>
+          <circle cx="46" cy="38" r="5" fill="#2f1c16"/>
+          <circle cx="74" cy="38" r="5" fill="#2f1c16"/>
+          <path d="M52 48 L60 58 L68 48" stroke="#2f1c16" stroke-width="3" stroke-linecap="round"/>
+          <rect x="50" y="24" width="20" height="6" rx="3" fill="#8b6b5e" transform="rotate(-6 50 24)"/>
+          <rect x="44" y="20" width="32" height="6" rx="3" fill="#8b6b5e" transform="rotate(4 44 20)"/>
+        </svg>`
+      },
+      {
+        id: 2,
+        name: 'Пётр I Великий',
+        description: 'Царь-реформатор, прорубил «окно в Европу», ввёл Табель о рангах, основал Санкт-Петербург, победил в Северной войне.',
+        hint: 'Северная война, Полтава',
+        svg: `<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="60" cy="60" r="58" fill="#d6b8ae" stroke="#5f3e34" stroke-width="2"/>
+          <circle cx="60" cy="40" r="24" fill="#f7ede8" stroke="#7a5b4e" stroke-width="2"/>
+          <path d="M38 68 Q60 88 82 68 L76 98 L44 98 L38 68Z" fill="#3d2b24" stroke="#2f1c16" stroke-width="2"/>
+          <rect x="46" y="62" width="28" height="8" rx="4" fill="#2f1c16"/>
+          <circle cx="44" cy="36" r="5" fill="#2f1c16"/>
+          <circle cx="76" cy="36" r="5" fill="#2f1c16"/>
+          <path d="M52 46 L60 56 L68 46" stroke="#2f1c16" stroke-width="2.5" stroke-linecap="round"/>
+          <rect x="28" y="26" width="12" height="6" rx="3" fill="#b58d7a" transform="rotate(-12 28 26)"/>
+          <rect x="80" y="26" width="12" height="6" rx="3" fill="#b58d7a" transform="rotate(12 80 26)"/>
+        </svg>`
+      },
+      {
+        id: 3,
+        name: 'Екатерина II Великая',
+        description: 'Императрица эпохи Просвещения, провела губернскую реформу, присоединила Крым, разделы Польши, Жалованные грамоты.',
+        hint: 'просвещённый абсолютизм, фавориты',
+        svg: `<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="60" cy="60" r="58" fill="#e8d0c4" stroke="#8b6b5e" stroke-width="2"/>
+          <circle cx="60" cy="40" r="24" fill="#fdf5f0" stroke="#7a5b4e" stroke-width="2"/>
+          <path d="M36 68 Q60 90 84 68 L78 100 L42 100 L36 68Z" fill="#4d322a" stroke="#2f1c16" stroke-width="2"/>
+          <rect x="46" y="60" width="28" height="8" rx="4" fill="#2f1c16"/>
+          <circle cx="44" cy="36" r="5" fill="#2f1c16"/>
+          <circle cx="76" cy="36" r="5" fill="#2f1c16"/>
+          <path d="M52 48 L60 58 L68 48" stroke="#2f1c16" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M30 44 L24 40 L28 34 L34 38 L38 30 L44 36 L38 44 L44 50 L36 48 L30 44Z" fill="#b58d7a" opacity="0.7"/>
+          <path d="M84 44 L90 40 L86 34 L80 38 L76 30 L70 36 L76 44 L70 50 L78 48 L84 44Z" fill="#b58d7a" opacity="0.7"/>
+        </svg>`
+      },
+      {
+        id: 4,
+        name: 'Александр II Освободитель',
+        description: 'Отменил крепостное право в 1861 г., провёл земскую, судебную, военную реформы. Погиб от бомбы народовольцев.',
+        hint: 'реформа 1861, отмена крепостного права',
+        svg: `<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="60" cy="60" r="58" fill="#dcc6ba" stroke="#6b4d3f" stroke-width="2"/>
+          <circle cx="60" cy="40" r="24" fill="#f5eae4" stroke="#7a5b4e" stroke-width="2"/>
+          <path d="M38 68 Q60 88 82 68 L76 98 L44 98 L38 68Z" fill="#3d2b24" stroke="#2f1c16" stroke-width="2"/>
+          <rect x="46" y="62" width="28" height="8" rx="4" fill="#2f1c16"/>
+          <circle cx="44" cy="36" r="5" fill="#2f1c16"/>
+          <circle cx="76" cy="36" r="5" fill="#2f1c16"/>
+          <path d="M52 46 L60 56 L68 46" stroke="#2f1c16" stroke-width="2.5" stroke-linecap="round"/>
+          <rect x="34" y="26" width="12" height="6" rx="3" fill="#b58d7a" transform="rotate(-8 34 26)"/>
+          <rect x="74" y="26" width="12" height="6" rx="3" fill="#b58d7a" transform="rotate(8 74 26)"/>
+        </svg>`
+      },
+      {
+        id: 5,
+        name: 'Владимир Мономах',
+        description: 'Великий князь киевский, автор «Поучения», при нём составлена «Повесть временных лет», объединил русские земли.',
+        hint: 'Любечский съезд, «Поучение детям»',
+        svg: `<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="60" cy="60" r="58" fill="#d2bdb2" stroke="#7a5b4e" stroke-width="2"/>
+          <circle cx="60" cy="42" r="22" fill="#efe3dc" stroke="#6b4d3f" stroke-width="2"/>
+          <path d="M40 70 Q60 90 80 70 L74 100 L46 100 L40 70Z" fill="#4d322a" stroke="#2f1c16" stroke-width="2"/>
+          <circle cx="46" cy="38" r="4" fill="#2f1c16"/>
+          <circle cx="74" cy="38" r="4" fill="#2f1c16"/>
+          <path d="M52 48 L60 56 L68 48" stroke="#2f1c16" stroke-width="2.5" stroke-linecap="round"/>
+          <rect x="42" y="22" width="36" height="8" rx="4" fill="#b58d7a" opacity="0.8"/>
+        </svg>`
+      },
+      {
+        id: 6,
+        name: 'Борис Годунов',
+        description: 'Царь в Смутное время, учредил патриаршество, при нём началось восстание Хлопка, умер во время борьбы с Лжедмитрием I.',
+        hint: 'Смута, Лжедмитрий I',
+        svg: `<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="60" cy="60" r="58" fill="#d4bbb0" stroke="#6b4d3f" stroke-width="2"/>
+          <circle cx="60" cy="42" r="22" fill="#f5eae4" stroke="#7a5b4e" stroke-width="2"/>
+          <path d="M42 68 Q60 86 78 68 L72 96 L48 96 L42 68Z" fill="#3d2b24" stroke="#2f1c16" stroke-width="2"/>
+          <rect x="48" y="62" width="24" height="6" rx="3" fill="#2f1c16"/>
+          <circle cx="46" cy="38" r="4" fill="#2f1c16"/>
+          <circle cx="74" cy="38" r="4" fill="#2f1c16"/>
+          <path d="M52 46 L60 54 L68 46" stroke="#2f1c16" stroke-width="2" stroke-linecap="round"/>
+        </svg>`
+      },
+      {
+        id: 7,
+        name: 'Николай I',
+        description: 'Император, подавивший восстание декабристов, ужесточивший цензуру, проигравший Крымскую войну. «Апогей самодержавия».',
+        hint: 'декабристы, Крымская война',
+        svg: `<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="60" cy="60" r="58" fill="#d2b8ac" stroke="#5f3e34" stroke-width="2"/>
+          <circle cx="60" cy="40" r="24" fill="#f7ede8" stroke="#7a5b4e" stroke-width="2"/>
+          <path d="M38 68 Q60 88 82 68 L76 100 L44 100 L38 68Z" fill="#3d2b24" stroke="#2f1c16" stroke-width="2"/>
+          <rect x="44" y="62" width="32" height="8" rx="4" fill="#2f1c16"/>
+          <circle cx="44" cy="36" r="5" fill="#2f1c16"/>
+          <circle cx="76" cy="36" r="5" fill="#2f1c16"/>
+          <path d="M50 46 L60 56 L70 46" stroke="#2f1c16" stroke-width="3" stroke-linecap="round"/>
+        </svg>`
+      },
+      {
+        id: 8,
+        name: 'Кузьма Минин',
+        description: 'Организатор второго ополчения в Смутное время, вместе с Пожарским освободил Москву от интервентов. Земский староста.',
+        hint: 'Нижний Новгород, 1612 г.',
+        svg: `<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="60" cy="60" r="58" fill="#d4bcb0" stroke="#6b4d3f" stroke-width="2"/>
+          <circle cx="60" cy="44" r="22" fill="#f5ece6" stroke="#7a5b4e" stroke-width="2"/>
+          <path d="M42 72 Q60 92 78 72 L72 102 L48 102 L42 72Z" fill="#4d322a" stroke="#2f1c16" stroke-width="2"/>
+          <circle cx="46" cy="40" r="4" fill="#2f1c16"/>
+          <circle cx="74" cy="40" r="4" fill="#2f1c16"/>
+          <path d="M52 48 L60 56 L68 48" stroke="#2f1c16" stroke-width="2" stroke-linecap="round"/>
+          <path d="M32 34 L26 28 L32 22 L38 28 L34 34Z" fill="#b58d7a"/>
+        </svg>`
+      },
+      {
+        id: 9,
+        name: 'Алексей Михайлович',
+        description: '«Тишайший» царь, принял Соборное уложение, при нём произошёл раскол церкви, восстание Степана Разина.',
+        hint: 'Соборное уложение 1649, раскол',
+        svg: `<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="60" cy="60" r="58" fill="#dcc6ba" stroke="#6b4d3f" stroke-width="2"/>
+          <circle cx="60" cy="42" r="24" fill="#f7ede8" stroke="#7a5b4e" stroke-width="2"/>
+          <path d="M38 70 Q60 90 82 70 L76 100 L44 100 L38 70Z" fill="#3d2b24" stroke="#2f1c16" stroke-width="2"/>
+          <rect x="46" y="64" width="28" height="8" rx="4" fill="#2f1c16"/>
+          <circle cx="44" cy="38" r="5" fill="#2f1c16"/>
+          <circle cx="76" cy="38" r="5" fill="#2f1c16"/>
+          <path d="M50 48 L60 58 L70 48" stroke="#2f1c16" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>`
+      }
+    ];
+
+    // ---------- состояние ----------
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let answered = false;
+    let totalQuestions = questions.length;
+    let shuffledQuestions = [];
+
+    // DOM refs
+    const questionText = document.getElementById('questionText');
+    const hintText = document.getElementById('hintText');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const resultBadge = document.getElementById('resultBadge');
+    const portraitBox = document.getElementById('portraitBox');
+    const nextBtn = document.getElementById('nextBtn');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const progressText = document.getElementById('progressText');
+    const resetBtn = document.getElementById('resetBtn');
+
+    // ---- helpers ----
+    function shuffleArray(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function buildOptions(currentQ) {
+      // соберём все имена, кроме текущего
+      const otherNames = questions
+        .filter(q => q.id !== currentQ.id)
+        .map(q => q.name);
+      // перемешаем и возьмём 3
+      const shuffledOthers = shuffleArray([...otherNames]);
+      const selectedOthers = shuffledOthers.slice(0, 3);
+      // добавим правильный ответ и перемешаем финальный набор
+      let options = [currentQ.name, ...selectedOthers];
+      options = shuffleArray(options);
+      return options;
+    }
+
+    function renderQuestion() {
+      const q = shuffledQuestions[currentQuestionIndex];
+      questionText.textContent = `Кто это: «${q.description}»?`;
+      hintText.textContent = `💡 ${q.hint}`;
+      const optionNames = buildOptions(q);
+      const btns = optionsContainer.querySelectorAll('.option-btn');
+      btns.forEach((btn, idx) => {
+        btn.textContent = optionNames[idx] || '—';
+        btn.dataset.correct = (optionNames[idx] === q.name) ? 'true' : 'false';
+        btn.className = 'option-btn';
+        btn.disabled = false;
+      });
+      // сброс обратной связи
+      resultBadge.innerHTML = '⚡ выбери вариант';
+      portraitBox.innerHTML = '';
+      answered = false;
+      nextBtn.disabled = true;
+      progressText.textContent = `вопрос ${currentQuestionIndex+1} / ${totalQuestions}`;
+      scoreDisplay.textContent = score;
+    }
+
+    function handleOptionClick(e) {
+      const btn = e.currentTarget;
+      if (answered || btn.disabled) return;
+      const isCorrect = btn.dataset.correct === 'true';
+      const q = shuffledQuestions[currentQuestionIndex];
+      // блокируем все кнопки
+      const allBtns = optionsContainer.querySelectorAll('.option-btn');
+      allBtns.forEach(b => b.disabled = true);
+
+      // подсветка
+      allBtns.forEach(b => {
+        if (b.dataset.correct === 'true') b.classList.add('correct');
+        else if (b === btn && !isCorrect) b.classList.add('wrong');
+      });
+
+      if (isCorrect) {
+        score += 5;
+        resultBadge.innerHTML = '✅ +5 баллов!';
+      } else {
+        resultBadge.innerHTML = '❌ неверно. Правильный ответ: ' + q.name;
+      }
+      scoreDisplay.textContent = score;
+
+      // портрет
+      portraitBox.innerHTML = `<div class="portrait-svg">${q.svg}</div>`;
+
+      answered = true;
+      nextBtn.disabled = false;
+    }
+
+    function nextQuestion() {
+      if (currentQuestionIndex < totalQuestions - 1) {
+        currentQuestionIndex++;
+        renderQuestion();
+      } else {
+        // игра окончена
+        questionText.textContent = '🏆 Игра завершена!';
+        hintText.textContent = '✨ ты прошла всех исторических героев';
+        optionsContainer.innerHTML = '';
+        resultBadge.innerHTML = `🎉 набрано ${score} баллов!`;
+        portraitBox.innerHTML = '';
+        nextBtn.disabled = true;
+        progressText.textContent = 'финиш';
+        // можно показать итог
+      }
+    }
+
+    function resetGame() {
+      currentQuestionIndex = 0;
+      score = 0;
+      answered = false;
+      shuffledQuestions = shuffleArray([...questions]);
+      scoreDisplay.textContent = '0';
+      renderQuestion();
+      // восстановим кнопки если игра была завершена
+      if (optionsContainer.children.length === 0) {
+        // пересоздадим кнопки
+        for (let i = 0; i < 4; i++) {
+          const btn = document.createElement('button');
+          btn.className = 'option-btn';
+          btn.dataset.index = i;
+          optionsContainer.appendChild(btn);
+        }
+      }
+      renderQuestion();
+    }
+
+    // ---- инициализация событий ----
+    function init() {
+      // привязка кликов к кнопкам
+      optionsContainer.querySelectorAll('.option-btn').forEach(btn => {
+        btn.addEventListener('click', handleOptionClick);
+      });
+      nextBtn.addEventListener('click', nextQuestion);
+      resetBtn.addEventListener('click', resetGame);
+      // начальная загрузка
+      shuffledQuestions = shuffleArray([...questions]);
+      renderQuestion();
+    }
+
+    init();
+  })();
+</script>
+</body>
+</html>
